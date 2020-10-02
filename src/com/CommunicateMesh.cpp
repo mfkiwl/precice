@@ -32,6 +32,7 @@ void CommunicateMesh::sendMesh(
   int dim = mesh.getDimensions();
 
   int numberOfVertices = mesh.vertices().size();
+  PRECICE_DEBUG("Number of vertices to send: " << numberOfVertices);
   _communication->send(numberOfVertices, rankReceiver);
   if (not mesh.vertices().empty()) {
     std::vector<double> coords(static_cast<size_t>(numberOfVertices) * dim);
@@ -47,6 +48,7 @@ void CommunicateMesh::sendMesh(
   }
 
   int numberOfEdges = mesh.edges().size();
+  PRECICE_DEBUG("Number of edges to send: " << numberOfEdges);
   _communication->send(numberOfEdges, rankReceiver);
   if (not mesh.edges().empty()) {
     //we need to send the vertexIDs first such that the right edges can be created later
@@ -67,11 +69,13 @@ void CommunicateMesh::sendMesh(
 
   if (dim == 3) {
     int numberOfTriangles = mesh.triangles().size();
+    PRECICE_DEBUG("Number of Triangles to send: " << numberOfTriangles);
     _communication->send(numberOfTriangles, rankReceiver);
     if (not mesh.triangles().empty()) {
       //we need to send the edgeIDs first such that the right edges can be created later
       //contrary to the normal sendMesh, this variant must also work for adding delta meshes
       std::vector<int> edgeIDs(numberOfEdges);
+      PRECICE_DEBUG("Number of Edges: " << edgeIDs.size());
       for (int i = 0; i < numberOfEdges; i++) {
         edgeIDs[i] = mesh.edges()[i].getID();
       }
