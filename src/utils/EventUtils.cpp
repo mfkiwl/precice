@@ -9,6 +9,7 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <ratio>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -198,6 +199,11 @@ EventRegistry &EventRegistry::instance()
 
 void EventRegistry::initialize(std::string applicationName, std::string runName, MPI_Comm comm)
 {
+  if(initialized) {
+    throw std::runtime_error{"EventRegistry already initialized"};
+  }
+  clear();
+
   this->applicationName = applicationName;
   this->runName         = runName;
   this->comm            = comm;
@@ -211,18 +217,19 @@ void EventRegistry::initialize(std::string applicationName, std::string runName,
 
 void EventRegistry::finalize()
 {
-  if (finalized)
+  if (finalized || !initialized)
     return;
 
+  // Stop running events
   globalEvent.stop();
   localRankData.finalize();
 
   for (auto &e : storedEvents)
     e.second.stop();
+  storedEvents.clear();
 
-  if (initialized) // this makes only sense when it was properly initialized
-    normalize();
-
+  // Process general data
+  normalize();
   collect();
 
   initialized = false;
