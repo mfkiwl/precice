@@ -122,6 +122,12 @@ public:
     /// pretty printer for comms
     void print(std::ostream &out) const;
 
+    /// pretty printer for the entire comm chain
+    void printChain(std::ostream &out) const;
+
+    /// Returns the pretty printed description as a string
+    std::string describe() const;
+
     /// @}
   };
 

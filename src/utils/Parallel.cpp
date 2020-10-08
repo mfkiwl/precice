@@ -144,6 +144,22 @@ void Parallel::CommState::print(std::ostream &out) const
 #endif
 }
 
+void Parallel::CommState::printChain(std::ostream &out) const
+{
+  print(out);
+  for (auto next = parent; next; next = next->parent) {
+    out << " > ";
+    next->print(out);
+  }
+}
+
+std::string Parallel::CommState::describe() const
+{
+  std::ostringstream oss;
+  printChain(oss);
+  return oss.str();
+}
+
 /// END CommState
 
 Parallel::CommStatePtr Parallel::current()
