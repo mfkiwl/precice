@@ -9,6 +9,7 @@
 #include "testing/TestContext.hpp"
 #include "utils/ManageUniqueIDs.hpp"
 #include "utils/MasterSlave.hpp"
+#include "utils/Parallel.hpp"
 
 namespace precice {
 namespace testing {
@@ -28,7 +29,8 @@ using precice::testing::operator""_on;
   if (context.invalid) {                              \
     return;                                           \
   }                                                   \
-  BOOST_TEST_MESSAGE(context.describe());
+  BOOST_TEST_MESSAGE(context.describe());             \
+  BOOST_TEST_MESSAGE(precice::utils::Parallel::current()->describe());
 
 /// Boost.Test decorator that unconditionally deletes the test.
 class Deleted : public bt::decorator::base {
